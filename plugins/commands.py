@@ -23,7 +23,7 @@ async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[
                     InlineKeyboardButton('🛡 Uᴘᴅᴀᴛᴇ', url=f"t.me/Devilservers"),
-                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/XAYOONARA")
+                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/takinggbot")
                   ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply(script.START_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup)
@@ -39,7 +39,7 @@ async def start(client, message):
     if len(message.command) != 2:
         buttons = [[
                     InlineKeyboardButton('🛡 Uᴘᴅᴀᴛᴇ', url=f"t.me/Devilservers"),
-                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/XAYOONARA")
+                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/takinggbot")
                   ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -80,7 +80,7 @@ async def start(client, message):
     if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "okay", "help"]:
         buttons = [[
                     InlineKeyboardButton('🛡 Uᴘᴅᴀᴛᴇ', url=f"t.me/Devilservers"),
-                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/XAYOONARA")
+                    InlineKeyboardButton('🧑🏻‍💻 Dᴇᴠᴇʟᴏᴘᴇʀ', url=f"t.me/takinggbot")
                   ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
