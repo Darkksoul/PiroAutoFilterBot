@@ -298,7 +298,6 @@ async def start(client, message):
     except Exception as e:
         logger.exception("Unexpected error: %s", e)
         await message.reply('<b><i>No such file exists or an error occurred.</b></i>')( [ [ InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers") ] ] ),
-    )
                     
 @Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
