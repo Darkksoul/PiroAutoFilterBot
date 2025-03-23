@@ -219,86 +219,51 @@ async def start(client, message):
             await asyncio.sleep(1) 
         return await sts.delete()
         
-    async def handle_file(client, message, file_id):
-    try:
-        files_ = await get_file_details(file_id)
-
-        # If file not in database, try fetching it from external ID
-        if not files_:
-            pre, file_id = ((base64.urlsafe_b64decode(file_id + "=" * (-len(file_id) % 4))).decode("ascii")).split("_", 1)
-            
+    files_ = await get_file_details(file_id)           
+    if not files_:
+        pre, file_id = ((base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))).decode("ascii")).split("_", 1)
+        try:
             msg = await client.send_cached_media(
                 chat_id=message.from_user.id,
                 file_id=file_id,
-                protect_content=(pre == 'filep'),
-                reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers")]]
-                )
+                protect_content=True if pre == 'filep' else False,
+                reply_markup=InlineKeyboardMarkup( [ [ InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers") ] ] ),
             )
-
-            # Identify media type properly
-            file = getattr(msg, 'photo', None) or getattr(msg, 'video', None) or getattr(msg, 'document', None)
-
-            if file:
-                file = file[-1] if isinstance(file, list) else file
-                title = getattr(file, 'file_name', 'Unknown File')
-                size = get_size(file.file_size)
-                f_caption = f"<code>{title}</code>"
-
-                # Apply custom caption
-                if CUSTOM_FILE_CAPTION:
-                    try:
-                        f_caption = CUSTOM_FILE_CAPTION.format(
-                            file_name=title or '', 
-                            file_size=size or '', 
-                            file_caption=''
-                        )
-                    except Exception as e:
-                        logger.exception("Caption formatting error: %s", e)
-
-                await msg.edit_caption(f_caption)
-
-            # Auto-delete after 10 minutes
-            await asyncio.sleep(600)
-            await client.delete_messages(chat_id=message.from_user.id, message_ids=msg.id)
+            filetype = msg.media
+            file = getattr(msg, filetype.value)
+            title = file.file_name
+            size=get_size(file.file_size)
+            f_caption = f"<code>{title}</code>"
+            if CUSTOM_FILE_CAPTION:
+                try:
+                    f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='')
+                except:
+                    return
+            await msg.edit_caption(f_caption)
             return
-
-        # File found in database
-        files = files_[0]
-        title = files.file_name
-        size = get_size(files.file_size)
-        f_caption = files.caption or f"{title}"
-
-        # Apply custom caption
-        if CUSTOM_FILE_CAPTION:
-            try:
-                f_caption = CUSTOM_FILE_CAPTION.format(
-                    file_name=title or '', 
-                    file_size=size or '', 
-                    file_caption=f_caption or ''
-                )
-            except Exception as e:
-                logger.exception("Caption formatting error: %s", e)
-
-        # Send media from database
-        msg = await client.send_cached_media(
-            chat_id=message.from_user.id,
-            file_id=files.file_id,
-            caption=f_caption,
-            protect_content=(pre == 'filep'),
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers")]]
-            )
-        )
-
-        # Auto-delete after 10 minutes
-        await asyncio.sleep(600)
-        await client.delete_messages(chat_id=message.from_user.id, message_ids=msg.id)
-
-    except Exception as e:
-        logger.exception("Unexpected error: %s", e)
-        await message.reply('<b><i>No such file exists or an error occurred.</b></i>')( [ [ InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers") ] ] ),
-                    
+        except:
+            pass
+        return await message.reply('<b><i>No such file exist.</b></i>')
+    files = files_[0]
+    title = files.file_name
+    size=get_size(files.file_size)
+    f_caption=files.caption
+    if CUSTOM_FILE_CAPTION:
+        try:
+            f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)
+        except Exception as e:
+            logger.exception(e)
+            f_caption=f_caption
+    if f_caption is None:
+        f_caption = f"{files.file_name}"
+    await client.send_cached_media(
+        chat_id=message.from_user.id,
+        file_id=file_id,
+        caption=f_caption,
+        protect_content=True if pre == 'filep' else False,
+        reply_markup=InlineKeyboardMarkup( [ [ InlineKeyboardButton('⚔️ DevilServers ⚔️', url="https://t.me/DevilServers") ] ] ),
+    )
+    
 @Client.on_message(filters.command('channel') & filters.user(ADMINS))
 async def channel_info(bot, message):
            
